@@ -3,7 +3,7 @@ const { Comment } = require('../../models');
 
 router.get('/', (req, res) => {
     Comment.findAll({
-        attributes:{}
+        attributes: {}
     })
         .then(dbCommentData => res.json(dbCommentData))
         .catch(err => {
@@ -27,13 +27,15 @@ router.post('/', (req, res) => {
 
 router.delete('/:id', (req, res) => {
     Comment.destroy({
-        where:{id: req.params.id}
+        where: { id: req.params.id }
     })
-        .then(dbCommentData => res.json(dbCommentData))
-        .catch(err => {
-            console.log(err);
-            res.status(400).json(err);
-        });
+        .then(dbCommentData => {
+            if (!dbCommentData) {
+                res.status(404).json({ message: 'No comment found with this id!' });
+                return;
+            }
+            res.json(dbCommentData);
+        })
 });
 
 module.exports = router;
